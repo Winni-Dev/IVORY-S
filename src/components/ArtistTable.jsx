@@ -58,8 +58,9 @@ const ArtistTable = ({ searchQuery }) => {
       className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden"
     >
       <div className="p-6">
-        <div className="overflow-x-hidden">
-          <table className="w-full">
+        {/* Vue desktop - visible uniquement sur grand écran */}
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="w-full min-w-[800px]">
             <thead className="bg-slate-600/20">
               <tr>
                 <th className="px-6 py-3 text-left text-slate-300 font-medium">Nom </th>
@@ -135,6 +136,82 @@ const ArtistTable = ({ searchQuery }) => {
               </AnimatePresence>
             </tbody>
           </table>
+        </div>
+
+        {/* Vue mobile et tablette avec revenus et streams */}
+        <div className="lg:hidden space-y-4">
+          {filteredArtists.map((artist) => (
+            <motion.div
+              key={artist.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-slate-800/50 rounded-xl overflow-hidden"
+            >
+              {/* En-tête de la carte */}
+              <div className="p-4">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-semibold text-slate-200">{artist.name}</h3>
+                    <p className="text-slate-400 text-sm">{artist.genre}</p>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-sm ${
+                    artist.status === 'active'
+                      ? 'bg-green-500/20 text-green-500'
+                      : 'bg-red-500/20 text-red-500'
+                  }`}>
+                    {artist.status === 'active' ? 'Actif' : 'Inactif'}
+                  </span>
+                </div>
+
+                {/* Stats principales */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <p className="text-slate-400 text-xs mb-1">Streams</p>
+                    <p className="text-orange-500 font-semibold">
+                      {new Intl.NumberFormat().format(artist.streams)}
+                    </p>
+                  </div>
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <p className="text-slate-400 text-xs mb-1">Revenus</p>
+                    <p className="text-green-500 font-semibold">
+                      XOF {new Intl.NumberFormat().format(artist.revenue)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="border-t border-slate-700 p-4 flex justify-end space-x-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleViewDetails(artist)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600"
+                >
+                  <FiEye />
+                  <span>Voir</span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleEdit(artist)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-orange-600/20 text-orange-500 hover:bg-orange-600/30"
+                >
+                  <FiEdit />
+                  <span>Modifier</span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleDelete(artist)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-red-600/20 text-red-500 hover:bg-red-600/30"
+                >
+                  <FiTrash />
+                  <span>Supprimer</span>
+                </motion.button>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
 

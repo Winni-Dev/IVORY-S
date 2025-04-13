@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import { FiTrash, FiCalendar, FiUsers } from 'react-icons/fi';
+import { FiTrash, FiCalendar, FiUsers, FiEye, FiEdit } from 'react-icons/fi';
 import DeleteConfirmationModalU from '../components/DeleteConfirmationModalU';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -165,8 +165,9 @@ const Users = () => {
           className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden shadow-lg"
         >
           <div className="p-6">
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            {/* Vue desktop - visible uniquement sur grand écran */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-slate-800">
                   <tr>
                     <th className="px-6 py-3 text-left text-slate-300 font-medium">Pseudo</th>
@@ -220,6 +221,82 @@ const Users = () => {
                   </AnimatePresence>
                 </tbody>
               </table>
+            </div>
+
+            {/* Vue mobile et tablette avec dernière connexion et adresse IP */}
+            <div className="lg:hidden space-y-6">
+              {filteredUsers.map((user) => (
+                <motion.div
+                  key={user.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-slate-800/50 rounded-xl overflow-hidden"
+                >
+                  {/* En-tête de la carte */}
+                  <div className="bg-slate-700/50 p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <h3 className="text-lg font-semibold text-slate-200">{user.lastName}</h3>
+                        <p className="text-slate-400 text-sm">{user.mail}</p>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-sm ${
+                        user.status === 'active' 
+                          ? 'bg-green-500/20 text-green-500'
+                          : 'bg-red-500/20 text-red-500'
+                      }`}>
+                        {user.status === 'active' ? 'Actif' : 'Inactif'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Informations principales */}
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="space-y-1">
+                        <p className="text-slate-400 text-sm">Date d'inscription</p>
+                        <p className="text-slate-200">{user.signupDate}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-slate-400 text-sm">Statut</p>
+                        <p className={`${
+                          user.status === 'active' 
+                            ? 'text-green-500' 
+                            : 'text-red-500'
+                        }`}>
+                          {user.status === 'active' ? 'Actif' : 'Inactif'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Nouvelle section pour dernière connexion et IP */}
+                    <div className="border-t border-slate-700/50 pt-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-slate-400 text-sm">Dernière connexion</p>
+                          <p className="text-slate-200">{user.lastLogin || 'Non disponible'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-slate-400 text-sm">Adresse IP</p>
+                          <p className="text-slate-200 font-mono text-sm">{user.Ip || 'Non disponible'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="border-t border-slate-700 p-4 flex justify-end space-x-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleDelete(user)}
+                      className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-red-600/20 text-red-500 hover:bg-red-600/30"
+                    >
+                      <FiTrash />
+                      <span>Supprimer</span>
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
           <AnimatePresence>
